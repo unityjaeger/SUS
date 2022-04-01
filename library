@@ -4,7 +4,12 @@ local lib = {
 }
 
 local funcs = {}
-local mainloop = nil
+game:GetService("RunService").RenderStepped:Connect(function(delta)
+    lib.fps = delta
+    for _, Function in pairs(funcs) do
+        Function()
+    end
+end)
 
 function lib:GUIDName(name)
     return name.."_"..game:GetService("HTTPService"):GenerateGUID(true)
@@ -12,27 +17,12 @@ end
 
 function lib:AddToRender(name, func)
     funcs[name] = func
-
-    if not mainloop then
-        mainloop = game:GetService("RunService").RenderStepped:Connect(function(delta)
-            for _, Function in pairs(funcs) do
-                Function(delta)
-            end
-        end)
-    end
-
-    return name
 end
 
 function lib:RemoveFromRender(name)
     if funcs[name] then
         funcs[name]:Disconnect()
         funcs[name] = nil
-    end
-
-    if lib:DictSize(funcs) == 0 and mainloop then
-        mainloop:Disconnect()
-        mainloop = nil
     end
 end
 
