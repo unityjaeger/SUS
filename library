@@ -1,35 +1,7 @@
 local lib = {
     waitstyle = "RenderStepped";
-    fps = 0;
 }
 
-local funcs = {}
-game:GetService("RunService").RenderStepped:Connect(function(delta)
-    lib.fps = delta
-    for _, Function in pairs(funcs) do
-        Function()
-    end
-end)
-
-function lib:GUIDName(name)
-    return name.."_"..game:GetService("HTTPService"):GenerateGUID(true)
-end
-
-function lib:AddToRender(name, func)
-    funcs[name] = func
-end
-
-function lib:RemoveFromRender(name)
-    if funcs[name] then
-        funcs[name]:Disconnect()
-        funcs[name] = nil
-    end
-end
-
-lib:AddToRender("fps_updater_intern", function(delta)
-    lib.fps = delta
-    print(delta)
-end)
 
 function lib:DictSize(dictionary, element)
     local n = 0
