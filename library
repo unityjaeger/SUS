@@ -15,7 +15,7 @@ OldNameCall = hookmetamethod(game, "__namecall", function(Self, ...)
         return
     end
 
-    return OldNameCall(...)
+    return OldNameCall(Self, ...)
 end)
 
 game:GetService("RunService").RenderStepped:Connect(function(delta)
