@@ -11,8 +11,10 @@ OldNameCall = hookmetamethod(game, "__namecall", function(Self, ...)
     local Args = {...}
     local NamecallMethod = getnamecallmethod()
 
-    if not checkcaller() and (NamecallMethod == "FireServer" or NamecallMethod == "InvokeServer")  then
-        return
+    if not checkcaller() and (NamecallMethod == "FireServer" or NamecallMethod == "InvokeServer") then
+        if table.find(toblock, Self) then
+            return
+        end
     end
 
     return OldNameCall(Self, ...)
