@@ -36,7 +36,10 @@ function lib:RemoveFromRender(name)
     end
 end
 
-
+lib:AddToRender("fps_updater_intern", function(delta)
+    lib.fps = delta
+    print(delta)
+end)
 
 function lib:DictSize(dictionary, element)
     local n = 0
@@ -99,7 +102,6 @@ function lib:WaitFor(parent, var, timeout, OnExist)
         end
 
         game:GetService("RunService")[lib.waitstyle]:Wait()
-        print(os.clock())
     end
 
     if parent:FindFirstChild(var) then
