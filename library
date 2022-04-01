@@ -19,11 +19,15 @@ function lib:Humanoid(alive, OnExist)
     if not hum then return end
 
     if not alive then
-        OnExist()
+        if OnExist then
+            OnExist()
+        end
         return hum
     else
         if hum.Health > 0 then
-            OnExist()
+            if OnExist then
+                OnExist()
+            end
             return hum
         end
     end
