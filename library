@@ -1,0 +1,25 @@
+local lib = {}
+
+function lib:Player()
+    return game:GetService("Players").LocalPlayer or nil
+end
+
+function lib:Character(var)
+    if lib:Player() and lib:Player().Character then
+        if var then
+            return lib:Player().Character:FindFirstChild(var) or nil
+        else
+            return lib:Player().Character
+        end
+    end
+end
+
+function lib:Humanoid()
+    return lib:Character("Humanoid")
+end
+
+function lib:Root()
+    return lib:Character("HumanoidRootPart")
+end
+
+return lib
