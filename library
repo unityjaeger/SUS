@@ -1,5 +1,52 @@
 local lib = {}
 
+local funcs = {}
+local mainloop = nil
+
+function lib:GUIDName(name)
+    return name.."_"..game:GetService("HTTPService"):GenerateGUID(true)
+end
+
+function lib:AddToRender(name, func)
+    funcs[name] = func
+
+    if not mainloop then
+        mainloop = game:GetService("RunService").RenderStepped:Connect(function()
+            for _, Function in pairs(funcs) do
+                Function()
+            end
+        end)
+    end
+
+    return name
+end
+
+function lib:RemoveFromRender(name)
+    if funcs[name] then
+        funcs[name]:Disconnect()
+        funcs[name] = nil
+    end
+
+    if lib:DictSize(funcs) == 0 and mainloop then
+        mainloop:Disconnect()
+        mainloop = nil
+    end
+end
+
+function lib:DictSize(dictionary, element)
+    local n = 0
+    for k,_ in pairs(dictionary) do
+        if element then
+            if k == element then
+                n = n + 1
+            end
+        else
+            n = n + 1
+        end
+    end
+    return n
+end
+
 function lib:Player()
     return game:GetService("Players").LocalPlayer or nil
 end
@@ -35,6 +82,29 @@ end
 
 function lib:Root(OnExist)
     return lib:Character("HumanoidRootPart")
+end
+
+function lib:Time()
+    return game:GetService("RunService").Heartbeat:Wait() < game:GetService("RunService").RenderStepped:Wait() and "Heartbeat" or "RenderStepped"
+end
+
+function lib:WaitFor(parent, var, timeout, OnExist)
+    local stopat = os.clock() + (timeout or 30)
+
+    while not parent:FindFirstChild(var) do
+        if os.clock() >= stopat then
+            break
+        end
+
+        game:GetService("RunService")[lib:Time()]:Wait()
+        print(os.clock())
+    end
+
+    if parent:FindFirstChild(var) then
+        return parent[var]
+    else
+        return nil
+    end
 end
 
 return lib
