@@ -1,4 +1,6 @@
-local lib = {}
+local lib = {
+    waitstyle = "RenderStepped"
+}
 
 local funcs = {}
 local mainloop = nil
@@ -84,9 +86,6 @@ function lib:Root(OnExist)
     return lib:Character("HumanoidRootPart")
 end
 
-function lib:Time()
-    return game:GetService("RunService").Heartbeat:Wait() < game:GetService("RunService").RenderStepped:Wait() and "Heartbeat" or "RenderStepped"
-end
 
 function lib:WaitFor(parent, var, timeout, OnExist)
     local stopat = os.clock() + (timeout or 30)
@@ -96,7 +95,7 @@ function lib:WaitFor(parent, var, timeout, OnExist)
             break
         end
 
-        game:GetService("RunService")[lib:Time()]:Wait()
+        game:GetService("RunService")[lib.waitstyle]:Wait()
         print(os.clock())
     end
 
