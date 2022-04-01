@@ -1,6 +1,9 @@
 local lib = {
-    waitstyle = "RenderStepped"
+    waitstyle = "RenderStepped";
+    fps = 0;
 }
+
+print("1")
 
 local funcs = {}
 game:GetService("RunService").RenderStepped:Connect(function(delta)
