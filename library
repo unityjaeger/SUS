@@ -3,7 +3,21 @@ local lib = {
     fps = 0;
 }
 
+local toblock = {}
 local funcs = {}
+
+local OldNameCall = nil
+OldNameCall = hookmetamethod(game, "__namecall", function(Self, ...)
+    local Args = {...}
+    local NamecallMethod = getnamecallmethod()
+
+    if not checkcaller() and table.find(toblock, self) and (NamecallMethod == "FireServer" or NamecallMethod == "InvokeServer") then
+        return
+    end
+
+    return OldNameCall(...)
+end)
+
 game:GetService("RunService").RenderStepped:Connect(function(delta)
     lib.fps = 1/delta
 
@@ -63,27 +77,58 @@ end
 
 function lib:Humanoid(alive, OnExist)
     local hum = lib:Character("Humanoid")
-    if not hum then return end
+    if not hum then return false end
 
     if not alive then
         if OnExist then
             OnExist()
         end
-        return hum
     else
         if hum.Health > 0 then
             if OnExist then
                 OnExist()
             end
-            return hum
         end
     end
+
+    return hum
 end
 
 function lib:Root(OnExist)
-    return lib:Character("HumanoidRootPart")
+    local humrp = lib:Character("HumanoidRootPart")
+    if not humrp then return false end
+
+    if OnExist then
+        OnExist()
+    end
+    return humrp
 end
 
+function lib:TP(cframe)
+    lib:Root(function()
+        lib:Root().CFrame = cframe
+    end)
+end
+
+function lib:Tween(cframe, speed)
+    local root = lib:Root()
+    lib:Root(function()
+        local tweenspeed = (root.Position - cframe.Position).magnitude / speed
+        game:GetService("TweenService"):Create(root, TweenInfo.new(tweenspeed, Enum.EasingStyle.Linear), {CFrame = cframe}):Play()
+    end)
+end
+
+function lib:BlockRemote(remote)
+    if not table.find(toblock, remote) then
+        table.insert(toblock, remote)
+    end
+end
+
+function lib:UnblockRemote(remote)
+    if table.find(toblock, remote) then
+        table.remove(toblock, table.find(toblock, remote))
+    end
+end
 
 function lib:WaitFor(parent, var, timeout, OnExist)
     local stopat = os.clock() + (timeout or 30)
@@ -100,6 +145,13 @@ function lib:WaitFor(parent, var, timeout, OnExist)
         return parent[var]
     else
         return nil
+    end
+end
+
+function lib:Wait(time)
+    local stopat = os.clock() + (time or 0)
+    while os.clock() < stopat do
+        game:GetService("RunService")[lib.waitstyle]:Wait()
     end
 end
 
