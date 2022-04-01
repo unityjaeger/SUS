@@ -36,9 +36,11 @@ function lib:RemoveFromRender(name)
     end
 end
 
-lib:AddToRender("fps_updater_intern", function(delta)
-    lib.fps = delta
-    print(lib.fps)
+task.spawn(function()
+    lib:AddToRender("fps_updater_intern", function(delta)
+        lib.fps = delta
+        print(lib.fps)
+    end)
 end)
 
 function lib:DictSize(dictionary, element)
