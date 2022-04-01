@@ -14,11 +14,22 @@ function lib:Character(var)
     end
 end
 
-function lib:Humanoid()
-    return lib:Character("Humanoid")
+function lib:Humanoid(alive, OnExist)
+    local hum = lib:Character("Humanoid")
+    if not hum then return end
+
+    if not alive then
+        OnExist()
+        return hum
+    else
+        if hum.Health > 0 then
+            OnExist()
+            return hum
+        end
+    end
 end
 
-function lib:Root()
+function lib:Root(OnExist)
     return lib:Character("HumanoidRootPart")
 end
 
