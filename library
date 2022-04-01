@@ -1,6 +1,5 @@
 local lib = {
     waitstyle = "RenderStepped"
-    fps = 0;
 }
 
 local funcs = {}
