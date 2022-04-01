@@ -6,12 +6,12 @@ local lib = {
 local toblock = {}
 local funcs = {}
 
-local OldNameCall = nil
+local OldNameCall
 OldNameCall = hookmetamethod(game, "__namecall", function(Self, ...)
     local Args = {...}
     local NamecallMethod = getnamecallmethod()
 
-    if not checkcaller() and table.find(toblock, Self) and (NamecallMethod == "FireServer" or NamecallMethod == "InvokeServer") then
+    if not checkcaller() and (NamecallMethod == "FireServer" or NamecallMethod == "InvokeServer") and table.find(toblock, Self) then
         return
     end
 
