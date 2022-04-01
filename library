@@ -1,5 +1,6 @@
 local lib = {
     waitstyle = "RenderStepped"
+    fps = 0;
 }
 
 local funcs = {}
@@ -13,9 +14,9 @@ function lib:AddToRender(name, func)
     funcs[name] = func
 
     if not mainloop then
-        mainloop = game:GetService("RunService").RenderStepped:Connect(function()
+        mainloop = game:GetService("RunService").RenderStepped:Connect(function(delta)
             for _, Function in pairs(funcs) do
-                Function()
+                Function(delta)
             end
         end)
     end
@@ -34,6 +35,11 @@ function lib:RemoveFromRender(name)
         mainloop = nil
     end
 end
+
+lib:AddToRender("fps_updater_intern", function(delta)
+    lib.fps = delta
+    print(lib.fps)
+end)
 
 function lib:DictSize(dictionary, element)
     local n = 0
@@ -96,7 +102,6 @@ function lib:WaitFor(parent, var, timeout, OnExist)
         end
 
         game:GetService("RunService")[lib.waitstyle]:Wait()
-        print(os.clock())
     end
 
     if parent:FindFirstChild(var) then
