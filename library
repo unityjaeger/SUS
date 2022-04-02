@@ -116,7 +116,7 @@ end
 function lib:Tween(cframe, speed)
     local root = lib:Root()
     lib:Root(function()
-        local tweenspeed = (root.Position - cframe.Position).magnitude / speed
+        local tweenspeed = speed / (root.Position - cframe.Position).magnitude
         game:GetService("TweenService"):Create(root, TweenInfo.new(tweenspeed, Enum.EasingStyle.Linear), {CFrame = cframe}):Play()
     end)
 end
